@@ -4,18 +4,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_register_login/common/bloc/button/button_state.dart';
 import 'package:flutter_register_login/common/bloc/button/button_state_cubit.dart';
 import 'package:flutter_register_login/common/widgets/button/basic_app_button.dart';
-import 'package:flutter_register_login/data/dto/dto_signup_params.dart';
-import 'package:flutter_register_login/domain/usecases/signup_usecase.dart';
-import 'package:flutter_register_login/presentation/auth/pages/signin_page.dart';
+import 'package:flutter_register_login/data/dto/dto_signin_params.dart';
+import 'package:flutter_register_login/domain/usecases/signin_usecase.dart';
+import 'package:flutter_register_login/presentation/auth/pages/signup_page.dart';
+import 'package:flutter_register_login/presentation/home/pages/home_page.dart';
 import 'package:flutter_register_login/service_locator.dart';
 
-class SignupPage extends StatelessWidget {
-  SignupPage({super.key});
+class SigninPage extends StatelessWidget {
+  SigninPage({super.key});
 
-  final TextEditingController _emailCtr = TextEditingController();
-  final TextEditingController _usernameCtr = TextEditingController();
-  final TextEditingController _passwordCtr = TextEditingController();
-  final TextEditingController _passwordConfirmCtr = TextEditingController();
+  final TextEditingController _emailCon = TextEditingController();
+  final TextEditingController _passwordCon = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class SignupPage extends StatelessWidget {
             if (state is ButtonSuccessState) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => SigninPage()),
+                MaterialPageRoute(builder: (context) => const HomePage()),
               );
             }
             if (state is ButtonFailureState) {
@@ -42,19 +41,15 @@ class SignupPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _signup(),
+                  _signin(),
                   const SizedBox(height: 50),
-                  _userNameField(),
-                  const SizedBox(height: 20),
                   _emailField(),
                   const SizedBox(height: 20),
                   _password(),
-                  const SizedBox(height: 20),
-                  _passwordConfirm(),
                   const SizedBox(height: 60),
                   _createAccountButton(context),
                   const SizedBox(height: 20),
-                  _signinText(context)
+                  _signupText(context)
                 ],
               ),
             ),
@@ -64,80 +59,60 @@ class SignupPage extends StatelessWidget {
     );
   }
 
-  Widget _signup() {
+  Widget _signin() {
     return const Text(
-      'Sign Up',
+      'Sign In',
       style: TextStyle(
-        color: Color(0xff2A4ECA),
-        fontWeight: FontWeight.bold,
-        fontSize: 32,
-      ),
-    );
-  }
-
-  Widget _userNameField() {
-    return TextField(
-      controller: _usernameCtr,
-      decoration: const InputDecoration(hintText: 'Username'),
+          color: Color(0xff2A4ECA), fontWeight: FontWeight.bold, fontSize: 32),
     );
   }
 
   Widget _emailField() {
     return TextField(
-      controller: _emailCtr,
+      controller: _emailCon,
       decoration: const InputDecoration(hintText: 'Email'),
     );
   }
 
   Widget _password() {
     return TextField(
-      controller: _passwordCtr,
+      controller: _passwordCon,
       decoration: const InputDecoration(hintText: 'Password'),
-    );
-  }
-
-  Widget _passwordConfirm() {
-    return TextField(
-      controller: _passwordConfirmCtr,
-      decoration: const InputDecoration(hintText: 'Password Confirm'),
     );
   }
 
   Widget _createAccountButton(BuildContext context) {
     return Builder(builder: (context) {
       return BasicAppButton(
-        title: 'Create Account',
-        onPressed: () => context.read<ButtonStateCubit>().excute(
-            usecase: svcLocator<SignupUseCase>(),
-            params: DtoSignUpParams(
-              email: _emailCtr.text,
-              username: _usernameCtr.text,
-              password: _passwordCtr.text,
-              passwordConfirm: _passwordConfirmCtr.text,
-            )),
-      );
+          title: 'Login',
+          onPressed: () {
+            context.read<ButtonStateCubit>().excute(
+                  usecase: svcLocator<SigninUseCase>(),
+                  params: DtoSignInParams(
+                    email: _emailCon.text,
+                    password: _passwordCon.text,
+                  ),
+                );
+          });
     });
   }
 
-  Widget _signinText(BuildContext context) {
+  Widget _signupText(BuildContext context) {
     return Text.rich(
       TextSpan(children: [
         const TextSpan(
-          text: 'Do you have account?',
-          style: TextStyle(
-            color: Color(0xff3B4054),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+            text: "Don't you have account?",
+            style: TextStyle(
+                color: Color(0xff3B4054), fontWeight: FontWeight.w500)),
         TextSpan(
-            text: ' Sign In',
+            text: ' Sign Up',
             style: const TextStyle(
                 color: Color(0xff3461FD), fontWeight: FontWeight.w500),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SigninPage()),
+                  MaterialPageRoute(builder: (context) => SignupPage()),
                 );
               })
       ]),
